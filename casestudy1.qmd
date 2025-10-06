@@ -32,7 +32,7 @@ We will introduce our research questions, background of the problem and the moti
 
 ## Background {#sec-background}
 
-During the US presidential election of 2000, in Palm Beach County there was a confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to a confusing ballot in this county, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan.
+During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be because on the ballot, someone hastily voting for Gore could have easily mistaken which bubble to fill out and mistakenly cast a vote for Buchanan due to the confusing nature of the ballot compared to other counties.
 
 ## Research Questions {#sec-research}
 
