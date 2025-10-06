@@ -20,6 +20,7 @@ execute:
 ---
 
 ```{r, include=FALSE}
+#loading packages
 library(tidyverse)
 library(Sleuth2)
 library(kableExtra)
@@ -48,7 +49,7 @@ We want to determine if the ballot in the Palm Beach county lead to people mista
 
 # Data Description {#sec-data}
 
-In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchnan and Bush.
+In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchanan and Bush.
 
 ## Variables Used {#sec-data-variables}
 
@@ -59,43 +60,67 @@ In this section, we will introduce the variables we are going to use for this ca
 ## Exploratory Data Analysis {#sec-data-eda}
 
 ```{r, include=FALSE}
+#loading the sleuth2 election data set
 election <- Sleuth2::ex0825
+
+#creating a variable where only Palm Beach is considered
 election_pb <- election |>
 filter(County == "Palm Beach")
+
+#creating a variable where Palm Beach is not considered 
 election_wo_pb <- election |> filter(County  != "Palm Beach")
+
+#printing out the first 5 rows of the original data set
 head(election, 5)
-head(election_pb, 5)
+
+#printing out the row of the new Palm Beach data set 
+head(election_pb)
+
+#printing out the first 5 rows of the new data set that excludes Palm Beach
 head(election_wo_pb,5)
 ```
 
 ```{r}
-#Preparing the table for Buchanan
+#creating a new variable that only contains Buchanan's election data
 election_summary_buchanan <- election|>
   select(Buchanan2000)
+
+#printing out the first 5 rows of the Buchanan table
 head(election_summary_buchanan, 5)
 ```
 
 ```{r}
-#Preparing the table for Bush
+#creating a new variable that only contains Bush's election data
 election_summary_bush <- election|>
   select(Bush2000)
+
+#printing out the first 5 rows of the Bush table
 head(election_summary_bush, 5)
 ```
 
 ```{r tab:Buchanan, warning=FALSE}
-#Prepping the summary table 
+#Saving summary table of Buchanan election data
 election_count_summary_buchanan <-summary(election_summary_buchanan)
-kable(as.data.frame(election_count_summary_buchanan, caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
+
+#printing the summary table created above with captions.
+kable(as.data.frame(election_count_summary_buchanan, 
+      caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
 ```
 
 ```{r, warning=FALSE}
+#Saving summary table of Bush election data
 election_count_summary_bush <-summary(election_summary_bush)
-kable(as.data.frame(election_count_summary_bush, caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
+
+#printing the summary table created above with captions.
+kable(as.data.frame(election_count_summary_bush, 
+      caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
 ```
 
 ```{r}
-#Preparing the dataset for the EDA 
+#Creating a new data set that is better for EDA
 election_new <- election |>
+  
+  #pivoting longer to make separate box plots later
   pivot_longer(cols = c("Buchanan2000", "Bush2000"),
                names_to = "Candidate",
                values_to = "Count") |>
@@ -103,24 +128,35 @@ election_new <- election |>
                             "Bush2000" = "Bush",
                             "Buchanan2000" = "Buchanan"))
 
+#printing out first 5 lines of new data frame
 head(election_new, 5)
 
 ```
 
 ```{r fig-distribution-election, fig.cap=" "}
+
+#creating a box plot with the pivoted data
 ggplot(data = election_new,
        aes(x = Count, fill = Candidate))+
   geom_boxplot() +
+  
+  #adding a title and x label
   labs(title ="Vote Counts for Bush and Buchanan in Florida",
        x = "Vote Counts (In log scale)") +
+  
+  #creating multiple plots based on the candidate
   facet_wrap(~Candidate)+
+  
+  #scaling the x axis to log10 to make plot more legible 
   scale_x_log10()+
+  
+  #making the plot pretty :)
   theme_minimal()+
   theme(plot.margin = margin(10,10,10,10))  
   
 ```
 
-From the @fig-distribution-election, these boxplots show the distribution of Bush and Buchanan votes in the different Florida counties. It is worth noting that the x axis has been changed to be log10, so the differences between the two plots are more significant. From this we can gather that Bush had an overall greater mean count of votes by a significant margin as well as a more consistent voter base across all counties. Meanwhile, Buchanan had less consistent voters, with some counties having much higher counts of votes than others, all while still maintaining lower vote counts than Bush overall.
+From the @fig-distribution-election, these box plots show the distribution of Bush and Buchanan votes in the different Florida counties. It is worth noting that the x axis has been changed to be log10, so the differences between the two plots are more significant. From this we can gather that Bush had an overall greater mean count of votes by a significant margin as well as a more consistent voter base across all counties. Meanwhile, Buchanan had less consistent voters, with some counties having much higher counts of votes than others, all while still maintaining lower vote counts than Bush overall.
 
 # Analysis Model
 
@@ -195,12 +231,42 @@ qqline(residuals_post, col="red")
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
 ```{r tab:election-summary}
+<<<<<<< HEAD
 election_summary_post <- tidy(election_lm_post )
 kable(election_summary, caption = "Regression summary Post Transformation")
+=======
+
+#Creating a lm comparing Buchanan's and Bush's 2000 election data
+election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
+
+#saving the summary table of the election lm
+election_summary <- tidy(election_lm)
+
+#printing the summary table
+kable(election_summary, caption = "Regression summary")
+
+>>>>>>> 9393507b0e94aff3a42e2b6ba10a6510dd8e7144
 ```
 # p value is 0; so significant. 
 ```{r}
 
+<<<<<<< HEAD
+=======
+#Plotting the Bush and Buchanan data with a log transformation. 
+ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
+  geom_point() +
+  
+  #adding a line to the plot
+  geom_smooth(method = "lm", col = "red") +
+  
+  #adding labels 
+  labs(title = "Buchanan vs Bush 2000",
+       x = "Bush",
+       y = "Buchanan")+
+  
+  #making it pretty :)
+  theme_minimal()
+>>>>>>> 9393507b0e94aff3a42e2b6ba10a6510dd8e7144
 ```
 
 
@@ -209,5 +275,21 @@ As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 
 $$E[Buchanan2000|Bush2000] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= 45.29 +  0.004917 *Bush2000 + \epsilon$$
 
+<<<<<<< HEAD
 
 # Assessing the conditions:
+=======
+```{r}
+#saving residuals as a variable
+residuals <- resid(election_lm)
+```
+
+```{r}
+#plotting the residuals
+plot(fitted(election_lm), residuals)
+
+#adding a line at 0,0 to help the residual plot be more legible
+abline(0,0)
+
+```
+>>>>>>> 9393507b0e94aff3a42e2b6ba10a6510dd8e7144
