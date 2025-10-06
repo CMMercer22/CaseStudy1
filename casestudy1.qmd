@@ -212,7 +212,7 @@ residuals <- resid(election_lm)
 #plotting the residuals
 plot(fitted(election_lm), residuals)
 
-#adding a line at 00 to help the residual plot be more ledgible
+#adding a line at 00 to help the residual plot be more legible
 abline(0,0)
 
 ```
