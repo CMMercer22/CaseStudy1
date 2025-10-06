@@ -1,0 +1,166 @@
+---
+title: "Your Informative Title Here"
+subtitle: "Case Study 1" 
+author:
+  - name: "Radiah Khan"
+  - name: "Catherine Weeks" 
+  - name: "Mercer Mercer"
+date: 2025-10-06
+format: 
+  pdf:
+    geometry: 
+      - left=1in
+      - right=1in
+      - top=1in
+      - bottom=1in
+execute: 
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r, include=FALSE}
+library(tidyverse)
+library(Sleuth2)
+library(kableExtra)
+library(broom)
+```
+
+# Introduction {#sec-intro}
+
+We will introduce our research questions, background of the problem and the motive behind anayzing these questions.
+
+## Background {#sec-background}
+
+During the US presidential election of 2000, in Palm Beach County there was a confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to a confusing ballot in this county, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan.
+
+## Research Questions {#sec-research}
+
+In this case study, we aim to answer three questions:
+
+-   Is there a significant relationship between Bush and Buchanan votes within Palm Beach County?
+-   How does the relationship between Bush and Buchanan votes differ across other Florida counties?
+-   How many miscast votes were there for Buchanan in Palm Beach County?
+
+## Motivation behind the research questions {#sec-research-ques}
+
+We want to determine if the ballot in the Palm Beach county lead to people mistakenly casting votes for Buchnan when they meant to cast the vote for Gore.
+
+# Data Description {#sec-data}
+
+In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchnan and Bush.
+
+## Variables Used {#sec-data-variables}
+
+-   `County` : Names of the county in Florida during the 2000s election
+-   `Buchanan2000` : Number of votes for Buchanan in the specific county in Florida during that election
+-   `Bush2000` : Number of votes for Bush in the specific county in Florida during that election
+
+## Exploratory Data Analysis {#sec-data-eda}
+
+```{r, include=FALSE}
+election <- Sleuth2::ex0825
+election_pb <- election |>
+filter(County == "Palm Beach")
+election_wo_pb <- election |> filter(County  != "Palm Beach")
+head(election, 5)
+head(election_pb, 5)
+head(election_wo_pb,5)
+```
+
+```{r}
+#Preparing the table for Buchanan
+election_summary_buchanan <- election|>
+  select(Buchanan2000)
+head(election_summary_buchanan, 5)
+```
+
+```{r}
+#Preparing the table for Bush
+election_summary_bush <- election|>
+  select(Bush2000)
+head(election_summary_bush, 5)
+```
+
+```{r tab:Buchanan, warning=FALSE}
+#Prepping the summary table 
+election_count_summary_buchanan <-summary(election_summary_buchanan)
+kable(as.data.frame(election_count_summary_buchanan, caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
+```
+
+```{r, warning=FALSE}
+election_count_summary_bush <-summary(election_summary_bush)
+kable(as.data.frame(election_count_summary_bush, caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
+```
+
+```{r}
+#Preparing the dataset for the EDA 
+election_new <- election |>
+  pivot_longer(cols = c("Buchanan2000", "Bush2000"),
+               names_to = "Candidate",
+               values_to = "Count") |>
+  mutate(Candidate = recode(Candidate,
+                            "Bush2000" = "Bush",
+                            "Buchanan2000" = "Buchanan"))
+
+head(election_new, 5)
+
+```
+
+```{r fig-distribution-election, fig.cap=" "}
+ggplot(data = election_new,
+       aes(x = Count, fill = Candidate))+
+  geom_boxplot() +
+  labs(title ="Vote Counts for Bush and Buchanan in Florida",
+       x = "Vote Counts (In log scale)") +
+  facet_wrap(~Candidate)+
+  scale_x_log10()+
+  theme_minimal()+
+  theme(plot.margin = margin(10,10,10,10))  
+  
+```
+
+From the @fig-distribution-election, these boxplots show the distribution of Bush and Buchanan votes in the different Florida counties. It is worth noting that the x axis has been changed to be log10, so the differences between the two plots are more significant. From this we can gather that Bush had an overall greater mean count of votes by a significant margin as well as a more consistent voter base across all counties. Meanwhile, Buchanan had less consistent voters, with some counties having much higher counts of votes than others, all while still maintaining lower vote counts than Bush overall.
+
+# Analysis Model
+
+We will use a simple linear regression model to determine the relationship between the votes for Bush and the votes for Buchanan.
+
+-   **Null hypothesis** ($H_0$): $\beta = 0$\
+    There is no linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
+
+-   **Alternative hypothesis** ($H_1$): $\beta \neq 0$\
+    There is a linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
+
+The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
+
+```{r tab:election-summary}
+election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
+election_summary <- tidy(election_lm)
+kable(election_summary, caption = "Regression summary")
+
+```
+
+```{r}
+ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "red") +
+  labs(title = "Buchanan vs Bush 2000",
+       x = "Bush",
+       y = "Buchanan")+
+  theme_minimal()
+```
+
+As seen in Table \@ref(tab:election-summary), we set up the regression equation:
+
+$$E[Buchanan2000|Bush2000] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= 45.29 +  0.004917 *Bush2000 + \epsilon$$
+
+```{r}
+residuals <- resid(election_lm)
+```
+
+```{r}
+plot(fitted(election_lm), residuals)
+abline(0,0)
+
+```
