@@ -220,6 +220,8 @@ qqnorm(residuals_post)
 qqline(residuals_post, col="red")
 ```
 
+after it is transformmed, 
+log(y_i) = \beta_0+\beta_1log(x_i)
 
 
 -   **Null hypothesis** ($H_0$): $\beta = 0$\
@@ -278,8 +280,10 @@ prediction_intervals
 ```
 ```{r}
 election_transformed <- election |>
-  mutate(`log(Buchanan2000)` = log(Buchanan2000),
-    `log(Bush2000)` = log(Bush2000) )
+ mutate(
+    `log(Buchanan2000)` = round(log(Buchanan2000), 2),
+    `log(Bush2000)` = round(log(Bush2000), 2)
+  )
 
 election_transformed
 ```
