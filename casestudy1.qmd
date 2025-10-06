@@ -162,7 +162,8 @@ From the @fig-distribution-election, these box plots show the distribution of Bu
 
 We will use a simple linear regression model to determine the relationship between the votes for Bush and the votes for Buchanan.
 
-Assuming conditions are met for linear regression model. 
+Assuming conditions are met for linear regression model.
+
 ```{r fig-pre-transformed, fig.cap=" "}
 ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   geom_point() +
@@ -171,27 +172,29 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
        y = "Buchanan")+
   theme_minimal()
 ```
+
 ```{r}
 election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
 election_summary <- tidy(election_lm_pre)
 kable(election_summary, caption = "Regression summary Before Transformation")
 ```
+
 ```{r fig-pre-fitted, fig.cap=" "}
 plot(fitted(election_lm_pre), residuals)
 abline(0,0)
 
 ```
+
 ```{r fig-pre-transformed-normality, fig.cap=""}
 residuals <- resid(election_lm_pre)
 qqnorm(residuals)
 qqline(residuals, col="red")
 ```
 
-From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-normality, we can see that the data points are clustered, with a couple outliers. This does not meet the condition of linearity, and because of this we are going to re express the explanatory and response variables to hold the conditions. 
+From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-normality, we can see that the data points are clustered. This does not meet the condition of linearity, and because of this we are going to re express the explanatory and response variables to hold the conditions.
 
-#So we need the transformation.
-#Post Transformation
-#Scatterplot 
+Here is our post-transformation scatter plot.
+
 ```{r}
 ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   geom_point() +
@@ -202,30 +205,35 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   theme_minimal()
 ```
 
-#lm 
+### Linear Model
+
 ```{r}
 election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```
-#residual vs fitted
+
+### Residual vs Fitted
+
 ```{r fig-post-fitted, fig.cap=" "}
 plot(fitted(election_lm_post), residuals)
 abline(0,0)
 
 ```
-#normality 
+
+### Normality
+
 ```{r fig-post-transformed-normality, fig.cap=""}
 residuals_post <- resid(election_lm_post)
 qqnorm(residuals_post)
 qqline(residuals_post, col="red")
 ```
 
-
+After it is transformed, log($y_i$) = $\beta\_0$+$\beta_1log(x_i)$
 
 -   **Null hypothesis** ($H_0$): $\beta = 0$\
     There is no linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
 
--   **Alternative hypothesis** ($H_1$): $\beta \neq 0$\
+-   **Alternative hypothesis** ($H_A$): $\beta \neq 0$\
     There is a linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
 
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
@@ -240,7 +248,9 @@ election_summary <- tidy(election_lm)
 #printing the summary table
 kable(election_summary, caption = "Regression summary")
 ```
-# p value is 0; so significant. 
+
+The p-value is near 0; suggesting significant relationship.
+
 ```{r}
 #Plotting the Bush and Buchanan data with a log transformation. 
 ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
@@ -257,6 +267,7 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   #making it pretty :)
   theme_minimal()
 ```
+
 ```{r}
 #saving the summary table of the election lm (post transformation)
 election_summary_post <- tidy(election_lm_post )
@@ -268,21 +279,25 @@ kable(election_summary_post, caption = "Regression summary Post Transformation")
 
 As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 
-$$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$
-p-value is 0; so the results are statistically significant which rejects the null hypothesis. 
+$$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$ p-value is 0; so the results are statistically significant which rejects the null hypothesis.
+
 ```{r}
 prediction_intervals <- election_lm_post |>
   augment(interval = "prediction",
           conf.level = 0.95)
 prediction_intervals
 ```
+
 ```{r}
 election_transformed <- election |>
-  mutate(`log(Buchanan2000)` = log(Buchanan2000),
-    `log(Bush2000)` = log(Bush2000) )
+ mutate(
+    `log(Buchanan2000)` = round(log(Buchanan2000), 2),
+    `log(Bush2000)` = round(log(Bush2000), 2)
+  )
 
 election_transformed
 ```
+
 ```{r}
 ggplot(data = election_transformed, 
        mapping = aes(x = `log(Buchanan2000)`, y = `log(Bush2000)`)) +
@@ -292,7 +307,7 @@ geom_ribbon(data = prediction_intervals,
               aes(ymin = .lower, ymax= .upper),alpha = 0.25)+
   theme_bw()
 ```
+
 ```{r}
 unique(election_lm_post)
 ```
-
