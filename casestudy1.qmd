@@ -33,7 +33,7 @@ We will introduce our research questions, background of the problem and the moti
 
 ## Background {#sec-background}
 
-During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be because on the ballot, someone hastily voting for Gore could have easily mistaken which bubble to fill out and mistakenly cast a vote for Buchanan due to the confusing nature of the ballot compared to other counties.
+During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. During the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to a confusing ballot in this county, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan.
 
 ## Research Questions {#sec-research}
 
@@ -45,11 +45,11 @@ In this case study, we aim to answer three questions:
 
 ## Motivation behind the research questions {#sec-research-ques}
 
-We want to determine if the ballot in the Palm Beach county lead to people mistakenly casting votes for Buchnan when they meant to cast the vote for Gore.
+We want to determine if the ballot in the Palm Beach county lead to people mistakenly casting votes for Buchanan when they meant to cast the vote for Gore.
 
 # Data Description {#sec-data}
 
-In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchnan and Bush.
+In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchanan and Bush.
 
 ## Variables Used {#sec-data-variables}
 
@@ -156,7 +156,7 @@ ggplot(data = election_new,
   
 ```
 
-From the @fig-distribution-election, these boxplots show the distribution of Bush and Buchanan votes in the different Florida counties. It is worth noting that the x axis has been changed to be log10, so the differences between the two plots are more significant. From this we can gather that Bush had an overall greater mean count of votes by a significant margin as well as a more consistent voter base across all counties. Meanwhile, Buchanan had less consistent voters, with some counties having much higher counts of votes than others, all while still maintaining lower vote counts than Bush overall.
+From the @fig-distribution-election, these box plots show the distribution of Bush and Buchanan votes in the different Florida counties. It is worth noting that the x axis has been changed to be log10, so the differences between the two plots are more significant. From this we can gather that Bush had an overall greater mean count of votes by a significant margin as well as a more consistent voter base across all counties. Meanwhile, Buchanan had less consistent voters, with some counties having much higher counts of votes than others, all while still maintaining lower vote counts than Bush overall.
 
 # Analysis Model
 
