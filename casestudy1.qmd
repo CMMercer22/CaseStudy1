@@ -32,7 +32,7 @@ We will introduce our research questions, background of the problem and the moti
 
 ## Background {#sec-background}
 
-During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be because on the ballot, someone hastily voting for Gore could have easily mistaken which bubble to fill out and mistakenly cast a vote for Buchanan due to the confusing nature of the ballot compared to other counties.
+During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. During the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to a confusing ballot in this county, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan.
 
 ## Research Questions {#sec-research}
 
@@ -44,7 +44,7 @@ In this case study, we aim to answer three questions:
 
 ## Motivation behind the research questions {#sec-research-ques}
 
-We want to determine if the ballot in the Palm Beach county lead to people mistakenly casting votes for Buchnan when they meant to cast the vote for Gore.
+We want to determine if the ballot in the Palm Beach county lead to people mistakenly casting votes for Buchanan when they meant to cast the vote for Gore.
 
 # Data Description {#sec-data}
 
@@ -126,6 +126,66 @@ From the @fig-distribution-election, these boxplots show the distribution of Bus
 
 We will use a simple linear regression model to determine the relationship between the votes for Bush and the votes for Buchanan.
 
+Assuming conditions are met for linear regression model. 
+```{r fig-pre-transformed, fig.cap=" "}
+ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
+  geom_point() +
+  labs(title = "Buchanan vs Bush 2000",
+       x = "Bush",
+       y = "Buchanan")+
+  theme_minimal()
+```
+```{r}
+election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
+election_summary <- tidy(election_lm_pre)
+kable(election_summary, caption = "Regression summary Before Transformation")
+```
+```{r fig-pre-fitted, fig.cap=" "}
+plot(fitted(election_lm_pre), residuals)
+abline(0,0)
+
+```
+```{r fig-pre-transformed-normality, fig.cap=""}
+residuals <- resid(election_lm_pre)
+qqnorm(residuals)
+qqline(residuals, col="red")
+```
+
+From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-normality, we can see that the data points are clustered, with a couple outliers. This does not meet the condition of linearity, and because of this we are going to re express the explanatory and response variables to hold the conditions. 
+
+#So we need the transformation.
+#Post Transformation
+#Scatterplot 
+```{r}
+ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "red") +
+  labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
+       x = "Bush",
+       y = "Buchanan")+
+  theme_minimal()
+```
+
+#lm 
+```{r}
+election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
+
+```
+#residual vs fitted
+```{r fig-post-fitted, fig.cap=" "}
+plot(fitted(election_lm_post), residuals)
+abline(0,0)
+
+```
+#normality 
+```{r fig-post-transformed-normality, fig.cap=""}
+residuals_post <- resid(election_lm_post)
+qqnorm(residuals_post)
+qqline(residuals_post, col="red")
+```
+
+
+
 -   **Null hypothesis** ($H_0$): $\beta = 0$\
     There is no linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
 
@@ -135,32 +195,19 @@ We will use a simple linear regression model to determine the relationship betwe
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
 ```{r tab:election-summary}
-election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
-election_summary <- tidy(election_lm)
-kable(election_summary, caption = "Regression summary")
-
+election_summary_post <- tidy(election_lm_post )
+kable(election_summary, caption = "Regression summary Post Transformation")
 ```
-
+# p value is 0; so significant. 
 ```{r}
-ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
-  geom_point() +
-  geom_smooth(method = "lm", col = "red") +
-  labs(title = "Buchanan vs Bush 2000",
-       x = "Bush",
-       y = "Buchanan")+
-  theme_minimal()
+
 ```
+
+
 
 As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 
 $$E[Buchanan2000|Bush2000] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= 45.29 +  0.004917 *Bush2000 + \epsilon$$
 
-```{r}
-residuals <- resid(election_lm)
-```
 
-```{r}
-plot(fitted(election_lm), residuals)
-abline(0,0)
-
-```
+# Assessing the conditions:
