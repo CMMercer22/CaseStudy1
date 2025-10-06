@@ -103,7 +103,8 @@ head(election_summary_bush, 5)
 election_count_summary_buchanan <-summary(election_summary_buchanan)
 
 #printing the summary table created above with captions.
-kable(as.data.frame(election_count_summary_buchanan, caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
+kable(as.data.frame(election_count_summary_buchanan, 
+      caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
 ```
 
 ```{r, warning=FALSE}
@@ -111,7 +112,8 @@ kable(as.data.frame(election_count_summary_buchanan, caption = "Summary of Vote 
 election_count_summary_bush <-summary(election_summary_bush)
 
 #printing the summary table created above with captions.
-kable(as.data.frame(election_count_summary_bush, caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
+kable(as.data.frame(election_count_summary_bush, 
+      caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
 ```
 
 ```{r}
@@ -145,7 +147,7 @@ ggplot(data = election_new,
   #creating multiple plots based on the candidate
   facet_wrap(~Candidate)+
   
-  #scaling the x axis to log10 to make plot more legibile 
+  #scaling the x axis to log10 to make plot more legible 
   scale_x_log10()+
   
   #making the plot pretty :)
@@ -212,7 +214,7 @@ residuals <- resid(election_lm)
 #plotting the residuals
 plot(fitted(election_lm), residuals)
 
-#adding a line at 00 to help the residual plot be more legible
+#adding a line at 0,0 to help the residual plot be more legible
 abline(0,0)
 
 ```
