@@ -164,25 +164,46 @@ We will use a simple linear regression model to determine the relationship betwe
 
 Assuming conditions are met for linear regression model. 
 ```{r fig-pre-transformed, fig.cap=" "}
+
+#Adding a plot to check for linearity
 ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   geom_point() +
+  
+  #adding a title and axis labels
   labs(title = "Buchanan vs Bush 2000",
        x = "Bush",
        y = "Buchanan")+
   theme_minimal()
 ```
+
+
 ```{r}
+
+#creating an lm comparing Buchanan and Bush election data including Palm Beach
 election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
+
+#creating a summary table of the linear model
 election_summary <- tidy(election_lm_pre)
+
+#printing the linear model summary
 kable(election_summary, caption = "Regression summary Before Transformation")
 ```
+
+
 ```{r fig-pre-fitted, fig.cap=" "}
+#plotting residuals
 plot(fitted(election_lm_pre), residuals)
+#adding a line at 0 to help legibility 
 abline(0,0)
 
 ```
+
+
 ```{r fig-pre-transformed-normality, fig.cap=""}
+#saving the residuals as a variable
 residuals <- resid(election_lm_pre)
+
+#creating a qqplot of the residuals
 qqnorm(residuals)
 qqline(residuals, col="red")
 ```
@@ -193,9 +214,15 @@ From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-norm
 #Post Transformation
 #Scatterplot 
 ```{r}
+
+#plotting the bush and Buchanan data with a log transformation.
 ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   geom_point() +
+  
+  #adding a line
   geom_smooth(method = "lm", col = "red") +
+  
+  #adding a title and axis labels 
   labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
        x = "Bush",
        y = "Buchanan")+
@@ -204,18 +231,25 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
 
 #lm 
 ```{r}
+#creating a linear model of the transformed data
 election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```
 #residual vs fitted
 ```{r fig-post-fitted, fig.cap=" "}
+
+#plotting the transformed data residuals
 plot(fitted(election_lm_post), residuals)
 abline(0,0)
 
 ```
 #normality 
 ```{r fig-post-transformed-normality, fig.cap=""}
+
+#saving the new residuals as a variable 
 residuals_post <- resid(election_lm_post)
+
+#creating a qqplot of the new residuals
 qqnorm(residuals_post)
 qqline(residuals_post, col="red")
 ```
