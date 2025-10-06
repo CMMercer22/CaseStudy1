@@ -162,6 +162,66 @@ From the @fig-distribution-election, these box plots show the distribution of Bu
 
 We will use a simple linear regression model to determine the relationship between the votes for Bush and the votes for Buchanan.
 
+Assuming conditions are met for linear regression model. 
+```{r fig-pre-transformed, fig.cap=" "}
+ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
+  geom_point() +
+  labs(title = "Buchanan vs Bush 2000",
+       x = "Bush",
+       y = "Buchanan")+
+  theme_minimal()
+```
+```{r}
+election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
+election_summary <- tidy(election_lm_pre)
+kable(election_summary, caption = "Regression summary Before Transformation")
+```
+```{r fig-pre-fitted, fig.cap=" "}
+plot(fitted(election_lm_pre), residuals)
+abline(0,0)
+
+```
+```{r fig-pre-transformed-normality, fig.cap=""}
+residuals <- resid(election_lm_pre)
+qqnorm(residuals)
+qqline(residuals, col="red")
+```
+
+From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-normality, we can see that the data points are clustered, with a couple outliers. This does not meet the condition of linearity, and because of this we are going to re express the explanatory and response variables to hold the conditions. 
+
+#So we need the transformation.
+#Post Transformation
+#Scatterplot 
+```{r}
+ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "red") +
+  labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
+       x = "Bush",
+       y = "Buchanan")+
+  theme_minimal()
+```
+
+#lm 
+```{r}
+election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
+
+```
+#residual vs fitted
+```{r fig-post-fitted, fig.cap=" "}
+plot(fitted(election_lm_post), residuals)
+abline(0,0)
+
+```
+#normality 
+```{r fig-post-transformed-normality, fig.cap=""}
+residuals_post <- resid(election_lm_post)
+qqnorm(residuals_post)
+qqline(residuals_post, col="red")
+```
+
+
+
 -   **Null hypothesis** ($H_0$): $\beta = 0$\
     There is no linear relationship between the votes for Bush and the votes for Buchanan in the 2000 election across Florida counties.
 
@@ -171,7 +231,6 @@ We will use a simple linear regression model to determine the relationship betwe
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
 ```{r tab:election-summary}
-
 #Creating a lm comparing Buchanan's and Bush's 2000 election data
 election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
 
@@ -180,11 +239,9 @@ election_summary <- tidy(election_lm)
 
 #printing the summary table
 kable(election_summary, caption = "Regression summary")
-
 ```
-
+# p value is 0; so significant. 
 ```{r}
-
 #Plotting the Bush and Buchanan data with a log transformation. 
 ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   geom_point() +
@@ -201,10 +258,14 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   theme_minimal()
 ```
 
+
+
 As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 
 $$E[Buchanan2000|Bush2000] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= 45.29 +  0.004917 *Bush2000 + \epsilon$$
 
+
+# Assessing the conditions:
 ```{r}
 #saving residuals as a variable
 residuals <- resid(election_lm)
