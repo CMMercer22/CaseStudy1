@@ -257,25 +257,42 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   #making it pretty :)
   theme_minimal()
 ```
+```{r}
+#saving the summary table of the election lm (post transformation)
+election_summary_post <- tidy(election_lm_post )
 
+#printing the summary table (post transformation)
 
+kable(election_summary_post, caption = "Regression summary Post Transformation")
+```
 
 As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 
-$$E[Buchanan2000|Bush2000] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= 45.29 +  0.004917 *Bush2000 + \epsilon$$
-
-
-# Assessing the conditions:
+$$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$
+p-value is 0; so the results are statistically significant which rejects the null hypothesis. 
 ```{r}
-#saving residuals as a variable
-residuals <- resid(election_lm)
+prediction_intervals <- election_lm_post |>
+  augment(interval = "prediction",
+          conf.level = 0.95)
+prediction_intervals
+```
+```{r}
+election_transformed <- election |>
+  mutate(`log(Buchanan2000)` = log(Buchanan2000),
+    `log(Bush2000)` = log(Bush2000) )
+
+election_transformed
+```
+```{r}
+ggplot(data = election_transformed, 
+       mapping = aes(x = `log(Buchanan2000)`, y = `log(Bush2000)`)) +
+  geom_point()+
+  geom_smooth(method = lm, formula=y~x, fill="red", alpha=0.5)+
+geom_ribbon(data = prediction_intervals,
+              aes(ymin = .lower, ymax= .upper),alpha = 0.25)+
+  theme_bw()
+```
+```{r}
+unique(election_lm_post)
 ```
 
-```{r}
-#plotting the residuals
-plot(fitted(election_lm), residuals)
-
-#adding a line at 0,0 to help the residual plot be more legible
-abline(0,0)
-
-```
