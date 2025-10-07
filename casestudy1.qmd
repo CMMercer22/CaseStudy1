@@ -175,14 +175,14 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
 
 ```{r}
 election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
+election_lm_pre
 election_summary <- tidy(election_lm_pre)
 kable(election_summary, caption = "Regression summary Before Transformation")
 ```
 
 ```{r fig-pre-fitted, fig.cap=" "}
-plot(fitted(election_lm_pre), residuals)
+plot(fitted(election_lm_pre), residuals(election_lm_pre))
 abline(0,0)
-
 ```
 
 ```{r fig-pre-transformed-normality, fig.cap=""}
@@ -215,7 +215,8 @@ election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 ### Residual vs Fitted
 
 ```{r fig-post-fitted, fig.cap=" "}
-plot(fitted(election_lm_post), residuals)
+
+plot(fitted(election_lm_post), residuals(election_lm_post))
 abline(0,0)
 
 ```
@@ -268,7 +269,7 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   theme_minimal()
 ```
 
-```{r}
+```{r tab:post-summary, tab.cap= ""}
 #saving the summary table of the election lm (post transformation)
 election_summary_post <- tidy(election_lm_post )
 
@@ -277,45 +278,13 @@ election_summary_post <- tidy(election_lm_post )
 kable(election_summary_post, caption = "Regression summary Post Transformation")
 ```
 
-As seen in Table \@ref(tab:election-summary), we set up the regression equation:
+As seen in Table \@ref(tab:post-summary), we set up the regression equation:
 
 $$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$ p-value is 0; so the results are statistically significant which rejects the null hypothesis.
 
-```{r}
-new_election_conditioned<- data.frame
-```
 
 
-```{r}
-prediction_intervals <- election_lm_post |>
-  augment(interval = "prediction",
-          conf.level = 0.95)
-prediction_intervals
-```
 
-```{r}
-election_transformed <- election |>
- mutate(
-    `log(Buchanan2000)` = round(log(Buchanan2000), 2),
-    `log(Bush2000)` = round(log(Bush2000), 2)
-  )
-
-election_transformed
-```
-
-```{r}
-ggplot(data = election_transformed, 
-       mapping = aes(x = `log(Buchanan2000)`, y = `log(Bush2000)`)) +
-  geom_point()+
-  geom_smooth(method = lm, formula=y~x, fill="red", alpha=0.5)+
-geom_ribbon(data = prediction_intervals,
-              aes(ymin = .lower, ymax= .upper),alpha = 0.25)+
-  theme_bw()
-```
-
-```{r}
-unique(election_lm_post)
-```
 ```{r}
 pred <- data.frame(Bush2000 = 152846)
 election_lm_post |>
