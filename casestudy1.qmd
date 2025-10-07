@@ -1,5 +1,5 @@
 ---
-title: "Your Informative Title Here"
+title: "How the Election of 2000 in Palm Beach County Was a Sham"
 subtitle: "Case Study 1" 
 author:
   - name: "Radiah Khan"
