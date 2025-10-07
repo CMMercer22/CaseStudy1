@@ -282,6 +282,11 @@ As seen in Table \@ref(tab:election-summary), we set up the regression equation:
 $$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$ p-value is 0; so the results are statistically significant which rejects the null hypothesis.
 
 ```{r}
+new_election_conditioned<- data.frame
+```
+
+
+```{r}
 prediction_intervals <- election_lm_post |>
   augment(interval = "prediction",
           conf.level = 0.95)
@@ -311,3 +316,25 @@ geom_ribbon(data = prediction_intervals,
 ```{r}
 unique(election_lm_post)
 ```
+```{r}
+pred <- data.frame(Bush2000 = 152846)
+election_lm_post |>
+  augment(newdata = pred,
+          interval = "prediction",
+          conf.level = 0.95)|>
+  select(c(".fitted", ".lower", ".upper"))|>
+  exp()
+```
+
+We can say with 95% confidence that the number of Buchanan votes based on the number of Bush notes should be between 248 and 1,674 in Palm Beach County, FL. 
+This is significantly different than the actual number of Buchanan votes in Palm Beach County, which is 3,407. Assuming some of the votes cast for Buchanan were meant to be cast for Gore, our prediction interval suggests there were likely 2,763 miscast votes.
+
+
+## Summary
+
+In this case study, we set out to determine if the ballot in the Palm Beach County lead to people mistakenly casting votes for Buchanan when they meant to cast the vote for Gore.
+Based on our models and prediction intervals, the Buchanan votes from Palm Beach County, FL are significantly different than what we would expect to see. 
+This brings us to the conclusion that the confusing ballot for this county likely affected the votes, and led many people to mistakenly vote for Buchanan when they meant to vote for Gore.
+
+### Limitations 
+Our major limitation is that we are limited to election data within Florida. We also don’t know if Buchanan had an abnormally large voter base located within Palm Beach Florida. We also cannot prove that the reason Buchanan had an abnormality large vote count was because of voter fraud. If that was the case the independence condition would have been violated. However all of these limitations do not seem either likely or significant enough to affect the overall outcome to the extent we saw in the election of 2000. 
