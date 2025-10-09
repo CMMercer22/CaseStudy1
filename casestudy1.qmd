@@ -237,7 +237,8 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
 
 ```{r}
 
-#Creating a linear model of Buchanan votes and bush votes but they have both been log scaled.
+#Creating a linear model of Buchanan votes and bush votes but
+#they have both been log scaled.
 election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```
@@ -246,7 +247,7 @@ election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```{r fig-post-fitted, fig.cap=" "}
 
-#creating a residualplot of the transformed model 
+#creating a residual plot of the transformed model 
 plot(fitted(election_lm_post), residuals(election_lm_post))
 abline(0,0)
 
@@ -320,8 +321,10 @@ prediction_interval <- election_lm_post |>
 #printing the prediction interval that has been transformed back
 prediction_interval |> select(c(".fitted", ".lower", ".upper"))|> exp()
 
-#creating the prediction interval with a 95% conf level without specifying Palm Beach
-prediction_interval1 <- election_lm_post |> augment(election, interval = "prediction", conf.level = 0.95)
+#creating the prediction interval with a 95% conf level without specifying
+#Palm Beach
+prediction_interval1 <- election_lm_post |>
+  augment(election, interval = "prediction", conf.level = 0.95)
 
 ```
 
