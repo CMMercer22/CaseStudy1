@@ -330,14 +330,14 @@ prediction_interval <- election_lm_post |>
           interval = "prediction",
           conf.level = 0.95)
 
-prediction_interval
+#printing the prediction interval that has been transformed back
+prediction_interval |> select(c(".fitted", ".lower", ".upper"))|> exp()
 
 #creating the prediction interval with a 95% conf level without specifying Palm Beach
 prediction_interval1 <- election_lm_post |> augment(election, interval = "prediction", conf.level = 0.95)
 
-prediction_interval1
-
 ```
+
 
 
 ```{r}
