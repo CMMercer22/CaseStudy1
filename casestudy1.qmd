@@ -329,9 +329,6 @@ prediction_interval <- election_lm_post |>
   augment(newdata = pred,
           interval = "prediction",
           conf.level = 0.95)
-#|>
-  #select(c(".fitted", ".lower", ".upper"))|>
-  #exp()
 
 prediction_interval
 
