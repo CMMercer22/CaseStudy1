@@ -159,8 +159,10 @@ ggplot(data = election_new,
   scale_x_log10()+
   
   #making the plot pretty :)
+  
   theme_minimal()+
-  theme(plot.margin = margin(10,10,10,10))  
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"),
+        plot.margin = margin(10,10,10,10))  
   
 ```
 
@@ -179,6 +181,7 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   labs(title = "Buchanan vs Bush in the 2000 Elections",
        x = "Votes for Bush",
        y = "Votes for Buchanan")+
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
   theme_minimal()
 ```
 
@@ -232,7 +235,12 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
        x = "Bush",
        y = "Buchanan")+
-  theme_minimal()
+ labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
+     x = "Bush",
+     y = "Buchanan") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
+
 ```
 
 ### Linear Model
@@ -305,7 +313,10 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
        y = "Buchanan")+
   
   #making it pretty :)
-  theme_minimal()
+ 
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
+
 ```
 
 ```{r tab:post-summary, tab.cap= ""}
