@@ -33,8 +33,7 @@ We will introduce our research questions, background of the problem and the moti
 
 ## Background {#sec-background}
 
-During the US presidential election of 2000 Palm Beach County used a new confusing ballot that could have potentially influenced the election results for this county. Amid the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to the new ballot used in Palm Beach, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan. 
-In this case study, we plan to look at the relationship between Bush and Buchanan votes within Palm Beach County and compare that relationship to those in other Florida counties. We also plan to make a prediction of how many miscast votes there were.
+During the US presidential election of 2000 Palm Beach County used a new confusing ballot that could have potentially influenced the election results for this county. Amid the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to the new ballot used in Palm Beach, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan. In this case study, we plan to look at the relationship between Bush and Buchanan votes within Palm Beach County and compare that relationship to those in other Florida counties. We also plan to make a prediction of how many miscast votes there were.
 
 ## Research Questions {#sec-research}
 
@@ -89,8 +88,8 @@ election_summary_buchanan <- election|>
 #printing out the first 5 rows of the Buchanan table
 head(election_summary_buchanan, 5)
 ```
-Above we can see the first few rows of Buchanan's vote totals from counties in Florida.
 
+Above we can see the first few rows of Buchanan's vote totals from counties in Florida.
 
 ```{r}
 #creating a new variable that only contains Bush's election data
@@ -100,7 +99,8 @@ election_summary_bush <- election|>
 #printing out the first 5 rows of the Bush table
 head(election_summary_bush, 5)
 ```
-Above is  the first few rows of Bush's vote totals from counties in Florida.
+
+Above is the first few rows of Bush's vote totals from counties in Florida.
 
 ```{r tab:Buchanan, warning=FALSE}
 #Saving summary table of Buchanan election data
@@ -110,8 +110,8 @@ election_count_summary_buchanan <-summary(election_summary_buchanan)
 kable(election_count_summary_buchanan, 
       caption = "Summary of Vote Counts (Buchanan) in the 2000s Election")
 ```
-These are the summary statistics from Buchanan's vote counts. We can see overall Buchanan did not have a lot of voters across the different Florida counties.
 
+These are the summary statistics from Buchanan's vote counts. We can see overall Buchanan did not have a lot of voters across the different Florida counties.
 
 ```{r, warning=FALSE}
 #Saving summary table of Bush election data
@@ -121,8 +121,8 @@ election_count_summary_bush <-summary(election_summary_bush)
 kable(election_count_summary_bush, 
       caption = "Summary of Vote Counts (Bush) in the 2000s Election")
 ```
-These are the summary statistics from Bush's vote counts. We can see according to these summary statistics Bush had a fairly large voter base across all of the Florida Counties and just his mean vote count surpasses Buchanan's maximum.
 
+These are the summary statistics from Bush's vote counts. We can see according to these summary statistics Bush had a fairly large voter base across all of the Florida Counties and just his mean vote count surpasses Buchanan's maximum.
 
 ```{r}
 #Creating a new data set that is better for EDA
@@ -176,12 +176,11 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   geom_point() +
   
   #adding labels
-  labs(title = "Buchanan vs Bush 2000",
-       x = "Bush",
-       y = "Buchanan")+
+  labs(title = "Buchanan vs Bush in the 2000 Elections",
+       x = "Votes for Bush",
+       y = "Votes for Buchanan")+
   theme_minimal()
 ```
-
 
 ```{r}
 #creating a linear model of the Buchanan and Bush Votes
@@ -211,13 +210,12 @@ qqnorm(residuals)
 #adding a line to help with legibility 
 qqline(residuals, col="red")
 ```
+
 The first plot @fig-pre-transformed shows comparing Buchanan and Bush's vote totals by county tells us that there is at least a somewhat linear relationship between the two, but that we will likely need to preform a transformation to properly evaluate that relationship.
 
 Together @fig-pre-fitted and @fig-pre-transformed-normality confirm this suspicion. It shows us that these residuals are definitely not evenly distributed about the x axis and they are also clearly not evenly distanced vertically. This tells us that there are violations of linearity and of equal variance. And that the errors are not normally distributed, because of all of this we are going to re express the explanatory and response variables to hold the conditions.
 
-
-
-Here is our post-transformation scatter plot. You can see that the data is already significantly better fit jsut visually, but we will do further analysis to confirm this. 
+Here is our post-transformation scatter plot. You can see that the data is already significantly better fit jsut visually, but we will do further analysis to confirm this.
 
 ```{r}
 
@@ -321,9 +319,6 @@ As seen in Table \@ref(tab:post-summary), we set up the regression equation:
 
 $$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $$= -2.5771236 +   0.7577224 *Bush2000 $$ p-value is 0; so the results are statistically significant which rejects the null hypothesis.
 
-
-
-
 ```{r}
 #saving our prediction number as the number of votes Bush got in Palm County in 2000
 pred <- data.frame(Bush2000 = 152846)
@@ -337,14 +332,12 @@ election_lm_post |>
   exp()
 ```
 
-We can say with 95% confidence that the number of Buchanan votes based on the number of Bush notes should be between 248 and 1,674 in Palm Beach County, FL. 
-This is significantly different than the actual number of Buchanan votes in Palm Beach County, which is 3,407. Assuming some of the votes cast for Buchanan were meant to be cast for Gore, our prediction interval suggests there were likely 2,763 miscast votes.
+We can say with 95% confidence that the number of Buchanan votes based on the number of Bush notes should be between 248 and 1,674 in Palm Beach County, FL. This is significantly different than the actual number of Buchanan votes in Palm Beach County, which is 3,407. Assuming some of the votes cast for Buchanan were meant to be cast for Gore, our prediction interval suggests there were likely 2,763 miscast votes.
 
 ## Summary
 
-In this case study, we set out to determine if the ballot in the Palm Beach County lead to people mistakenly casting votes for Buchanan when they meant to cast the vote for Gore.
-Based on our models and prediction intervals, the Buchanan votes from Palm Beach County, FL are significantly different than what we would expect to see. 
-This brings us to the conclusion that the confusing ballot for this county likely affected the votes, and led many people to mistakenly vote for Buchanan when they meant to vote for Gore.
+In this case study, we set out to determine if the ballot in the Palm Beach County lead to people mistakenly casting votes for Buchanan when they meant to cast the vote for Gore. Based on our models and prediction intervals, the Buchanan votes from Palm Beach County, FL are significantly different than what we would expect to see. This brings us to the conclusion that the confusing ballot for this county likely affected the votes, and led many people to mistakenly vote for Buchanan when they meant to vote for Gore.
 
-### Limitations 
-Our major limitation is that we are limited to election data within Florida. We also don’t know if Buchanan had an abnormally large voter base located within Palm Beach Florida. We also cannot prove that the reason Buchanan had an abnormality large vote count was because of voter fraud. If that was the case the independence condition would have been violated. However all of these limitations do not seem either likely or significant enough to affect the overall outcome to the extent we saw in the election of 2000. 
+### Limitations
+
+Our major limitation is that we are limited to election data within Florida. We also don’t know if Buchanan had an abnormally large voter base located within Palm Beach Florida. We also cannot prove that the reason Buchanan had an abnormality large vote count was because of voter fraud. If that was the case the independence condition would have been violated. However all of these limitations do not seem either likely or significant enough to affect the overall outcome to the extent we saw in the election of 2000.
