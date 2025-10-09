@@ -49,13 +49,15 @@ We want to determine if the ballot in the Palm Beach county lead to people mista
 
 # Data Description {#sec-data}
 
+The data used in this case study is from the Sleuth2 package in RStudio.
 In this section, we will introduce the variables we are going to use for this case study. Later, we are going to perform an exploratory data analysis to see the distribution of votes for both Buchanan and Bush.
+There are 67 observations in this data set, each representing a county in Florida and their voting counts for Bush and Buchanan in the 2000 election. The first column, County represents the name of the county. The second column Buchanan2000 is the number of votes cast for Buchanan in the respective county. The third column Bush2000 is the number of votes cast for Bush in the respective county. 
 
 ## Variables Used {#sec-data-variables}
 
--   `County` : Names of the county in Florida during the 2000s election.
--   `Buchanan2000` : Number of votes for Buchanan in Palm Beach County during the 2000 election.
--   `Bush2000` : Number of votes for Bush in Palm Beach County during the 2000 election.
+-   `County`: Names of the county in Florida during the 2000s election.
+-   `Buchanan2000` : Number of votes for Buchanan in Palm Beach County during the 2000 election (response variable).
+-   `Bush2000` : Number of votes for Bush in Palm Beach County during the 2000 election (predictor variable).
 
 ## Exploratory Data Analysis {#sec-data-eda}
 
@@ -79,6 +81,7 @@ head(election_pb)
 #printing out the first 5 rows of the new data set that excludes Palm Beach
 head(election_wo_pb,5)
 ```
+There were no missing values in this data set. When we filtered the data to look at every county except Palm Beach, there were 66 values left in the data set.
 
 ```{r}
 #creating a new variable that only contains Buchanan's election data
@@ -160,6 +163,8 @@ ggplot(data = election_new,
   
   #making the plot pretty :)
   theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold", color = "black"))+
+
   theme(plot.margin = margin(10,10,10,10))  
   
 ```
@@ -179,7 +184,9 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   labs(title = "Buchanan vs Bush in the 2000 Elections",
        x = "Votes for Bush",
        y = "Votes for Buchanan")+
-  theme_minimal()
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold", color = "black"))
+
 ```
 
 ```{r tab:election-summary}
@@ -196,7 +203,8 @@ kable(election_summary, caption = "Regression summary Before Transformation")
 
 ```{r fig-pre-fitted, fig.cap=" "}
 #Plotting residuals of the pre-transformation model
-plot(fitted(election_lm_pre), residuals(election_lm_pre))
+plot(fitted(election_lm_pre), residuals(election_lm_pre),
+     main = "Residual Plot of Pre-Transformed Model")
 abline(0,0)
 ```
 
@@ -205,7 +213,7 @@ abline(0,0)
 residuals <- resid(election_lm_pre)
 
 #creating a qq plot of the residuals
-qqnorm(residuals)
+qqnorm(residuals, main = "Q-Q Plot of the Pre-Transformed Model" )
 
 #adding a line to help with legibility 
 qqline(residuals, col="red")
@@ -230,7 +238,9 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
        x = "Bush",
        y = "Buchanan")+
-  theme_minimal()
+    theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
+
 ```
 
 ### Linear Model
@@ -248,7 +258,8 @@ election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 ```{r fig-post-fitted, fig.cap=" "}
 
 #creating a residual plot of the transformed model 
-plot(fitted(election_lm_post), residuals(election_lm_post))
+plot(fitted(election_lm_post), residuals(election_lm_post),
+     main = "Residual Plot of Transformed Model")
 abline(0,0)
 
 ```
@@ -261,10 +272,11 @@ abline(0,0)
 residuals_post <- resid(election_lm_post)
 
 #creating a qq plot
-qqnorm(residuals_post)
+qqnorm(residuals_post,main = "Q-Q Plot of the Transformed Model")
 
 #adding a line for legibility
-qqline(residuals_post, col="red")
+qqline(residuals_post, col="red")+
+
 ```
 
 After it is transformed, log($y_i$) = $\beta\_0$+$\beta_1log(x_i)$
@@ -292,7 +304,8 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
        y = "Buchanan")+
   
   #making it pretty :)
-  theme_minimal()
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
 ```
 
 ```{r tab:post-summary, tab.cap= ""}
@@ -345,7 +358,12 @@ ggplot(data = election,
               mapping = aes(ymax = .upper, ymin = .lower),
               color = "red", fill = "red",
               alpha = .05, linetype = 2
-              )
+              ) +
+    labs(title = "Prediction Interval for the Transformed Regression Model",
+       x = "Bush2000(Log-Transformed)",
+       y = "Buchanan(Log-Transformed)")+
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, size = 12, face = "bold", color = "black"))
 
 ```
 
