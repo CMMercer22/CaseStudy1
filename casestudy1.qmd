@@ -278,23 +278,6 @@ After it is transformed, log($y_i$) = $\beta\_0$+$\beta_1log(x_i)$
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
 
-```{r}
-#Plotting the Bush and Buchanan data with a log transformation. 
-ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
-  geom_point() +
-  
-  #adding a line to the plot
-  geom_smooth(method = "lm", col = "red") +
-  
-  #adding labels 
-  labs(title = "Buchanan vs Bush 2000",
-       x = "Bush",
-       y = "Buchanan")+
-  
-  #making it pretty :)
-  theme_minimal()
-```
-
 ```{r tab:post-summary, tab.cap= ""}
 #saving the summary table of the election lm (post transformation)
 election_summary_post <- tidy(election_lm_post )
