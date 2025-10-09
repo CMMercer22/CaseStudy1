@@ -33,7 +33,8 @@ We will introduce our research questions, background of the problem and the moti
 
 ## Background {#sec-background}
 
-During the US presidential election of 2000, in Palm Beach County, Florida there was a confusing ballot that could have potentially influenced the election results for this county. During the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to a confusing ballot in this county, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan.
+During the US presidential election of 2000 Palm Beach County used a new confusing ballot that could have potentially influenced the election results for this county. Amidst the tight race between Gore and Bush, Palm Beach County had an unexpectedly high number of votes for Buchanan, from the Reform party. This may be due to the new ballot used in Palm Beach, where if not read closely, someone attempting to cast a vote for Gore could have mistakenly filled in the circle for Buchanan. 
+In this case study, we plan to look at the relationship between Bush and Buchanan votes within Palm Beach County and compare that relationship to those in other Florida counties. We also plan to make a prediction of how many miscast votes there were.
 
 ## Research Questions {#sec-research}
 
@@ -53,9 +54,9 @@ In this section, we will introduce the variables we are going to use for this ca
 
 ## Variables Used {#sec-data-variables}
 
--   `County` : Names of the county in Florida during the 2000s election
--   `Buchanan2000` : Number of votes for Buchanan in the specific county in Florida during that election
--   `Bush2000` : Number of votes for Bush in the specific county in Florida during that election
+-   `County` : Names of the county in Florida during the 2000s election.
+-   `Buchanan2000` : Number of votes for Buchanan in Palm Beach County during the 2000 election.
+-   `Bush2000` : Number of votes for Bush in Palm Beach County during the 2000 election.
 
 ## Exploratory Data Analysis {#sec-data-eda}
 
@@ -103,8 +104,8 @@ head(election_summary_bush, 5)
 election_count_summary_buchanan <-summary(election_summary_buchanan)
 
 #printing the summary table created above with captions.
-kable(as.data.frame(election_count_summary_buchanan, 
-      caption = "Summary of Vote Counts (Buchanan) in the 2000s Election"))
+kable(election_count_summary_buchanan, 
+      caption = "Summary of Vote Counts (Buchanan) in the 2000s Election")
 ```
 
 ```{r, warning=FALSE}
@@ -112,8 +113,8 @@ kable(as.data.frame(election_count_summary_buchanan,
 election_count_summary_bush <-summary(election_summary_bush)
 
 #printing the summary table created above with captions.
-kable(as.data.frame(election_count_summary_bush, 
-      caption = "Summary of Vote Counts (Bush) in the 2000s Election"))
+kable(election_count_summary_bush, 
+      caption = "Summary of Vote Counts (Bush) in the 2000s Election")
 ```
 
 ```{r}
@@ -162,32 +163,50 @@ From the @fig-distribution-election, these box plots show the distribution of Bu
 
 We will use a simple linear regression model to determine the relationship between the votes for Bush and the votes for Buchanan.
 
-Assuming conditions are met for linear regression model.
+To begin we will assume conditions are met for linear regression model. Later we will asses the conditions.
 
 ```{r fig-pre-transformed, fig.cap=" "}
+#NOTE TO US we should decide if we really want to use this graph. Is it necessary 
+
+#creating a plot of Bush and Buchanan's votes in each county 
 ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   geom_point() +
+  
+  #adding labels
   labs(title = "Buchanan vs Bush 2000",
        x = "Bush",
        y = "Buchanan")+
   theme_minimal()
 ```
 
+
+
 ```{r}
+#creating a linear model of the Buchannan and Bush Votes
 election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
 election_lm_pre
+
+#printing creating a summary table
 election_summary <- tidy(election_lm_pre)
+
+#printing the summary table
 kable(election_summary, caption = "Regression summary Before Transformation")
 ```
 
 ```{r fig-pre-fitted, fig.cap=" "}
+#Plotting residuals of the pre-transformation model
 plot(fitted(election_lm_pre), residuals(election_lm_pre))
 abline(0,0)
 ```
 
 ```{r fig-pre-transformed-normality, fig.cap=""}
+#saving the residuals of the pre transformation model as a variable 
 residuals <- resid(election_lm_pre)
+
+#creating a qq plot of the residuals
 qqnorm(residuals)
+
+#adding a line to help with legibility 
 qqline(residuals, col="red")
 ```
 
@@ -196,9 +215,15 @@ From the @fig-pre-transformed, @fig-pre-fitted and the @fig-pre-transformed-norm
 Here is our post-transformation scatter plot.
 
 ```{r}
+
+#plotting the data with a log scale on the x and y axis.
 ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
   geom_point() +
+  
+  #adding a line for legibility 
   geom_smooth(method = "lm", col = "red") +
+  
+  #adding labels and a title
   labs(title = "Transformed Model of Buchanan vs Bush 2000 Regression Model",
        x = "Bush",
        y = "Buchanan")+
@@ -208,6 +233,8 @@ ggplot(election, aes(x = log(Bush2000), y = log(Buchanan2000))) +
 ### Linear Model
 
 ```{r}
+
+#Creating a linear model of Buchanan votes and bush votes but they have both been log scaled.
 election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```
@@ -216,6 +243,7 @@ election_lm_post <- lm(log(Buchanan2000) ~ log(Bush2000), data = election)
 
 ```{r fig-post-fitted, fig.cap=" "}
 
+#creating a residualplot of the transformed model 
 plot(fitted(election_lm_post), residuals(election_lm_post))
 abline(0,0)
 
@@ -224,8 +252,14 @@ abline(0,0)
 ### Normality
 
 ```{r fig-post-transformed-normality, fig.cap=""}
+
+#saving the residuals as a variable
 residuals_post <- resid(election_lm_post)
+
+#creating a qq plot
 qqnorm(residuals_post)
+
+#adding a line for legibility
 qqline(residuals_post, col="red")
 ```
 
@@ -286,7 +320,10 @@ $$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $
 
 
 ```{r}
+#saving our prediction number as the number of votes Bush got in Palm County in 2000
 pred <- data.frame(Bush2000 = 152846)
+
+#creating the prediction interval with a 95% conf level
 election_lm_post |>
   augment(newdata = pred,
           interval = "prediction",
