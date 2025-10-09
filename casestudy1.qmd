@@ -277,6 +277,7 @@ After it is transformed, log($y_i$) = $\beta\_0$+$\beta_1log(x_i)$
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
 ```{r tab:election-summary}
+#AN EQUIVELENT OF THIS ALREADY EXISTS
 #Creating a lm comparing Buchanan's and Bush's 2000 election data
 election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
 
@@ -324,12 +325,41 @@ $$E[log(Buchanan2000)|log(Bush2000)] = \beta_0 + \beta_1*Bush2000 + \epsilon$$ $
 pred <- data.frame(Bush2000 = 152846)
 
 #creating the prediction interval with a 95% conf level
-election_lm_post |>
+prediction_interval <- election_lm_post |>
   augment(newdata = pred,
           interval = "prediction",
-          conf.level = 0.95)|>
-  select(c(".fitted", ".lower", ".upper"))|>
-  exp()
+          conf.level = 0.95)
+#|>
+  #select(c(".fitted", ".lower", ".upper"))|>
+  #exp()
+
+prediction_interval
+
+#creating the prediction interval with a 95% conf level without specifying Palm Beach
+prediction_interval1 <- election_lm_post |> augment(election, interval = "prediction", conf.level = 0.95)
+
+prediction_interval1
+
+```
+
+
+```{r}
+#plotting the prediction interval
+ggplot(data = election,
+       mapping = aes(x = log(Bush2000), y = log(Buchanan2000))
+       ) +
+  geom_point() +
+  
+  #adding the lm
+  geom_smooth(method = lm, formula = y~x) +
+  
+  #adding the prediction interval
+  geom_ribbon(data = prediction_interval1, 
+              mapping = aes(ymax = .upper, ymin = .lower),
+              color = "red", fill = "red",
+              alpha = .05, linetype = 2
+              )
+
 ```
 
 We can say with 95% confidence that the number of Buchanan votes based on the number of Bush notes should be between 248 and 1,674 in Palm Beach County, FL. This is significantly different than the actual number of Buchanan votes in Palm Beach County, which is 3,407. Assuming some of the votes cast for Buchanan were meant to be cast for Gore, our prediction interval suggests there were likely 2,763 miscast votes.
