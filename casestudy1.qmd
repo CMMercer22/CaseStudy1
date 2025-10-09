@@ -182,7 +182,7 @@ ggplot(election, aes(x = Bush2000, y = Buchanan2000)) +
   theme_minimal()
 ```
 
-```{r}
+```{r tab:election-summary}
 #creating a linear model of the Buchanan and Bush Votes
 election_lm_pre <- lm((Buchanan2000) ~(Bush2000), data = election)
 election_lm_pre
@@ -276,19 +276,6 @@ After it is transformed, log($y_i$) = $\beta\_0$+$\beta_1log(x_i)$
 
 The significance level for this test is $p = 0.05$, and the confidence interval is $95%$.
 
-```{r tab:election-summary}
-#AN EQUIVELENT OF THIS ALREADY EXISTS
-#Creating a lm comparing Buchanan's and Bush's 2000 election data
-election_lm <- lm(Buchanan2000 ~ Bush2000, data = election)
-
-#saving the summary table of the election lm
-election_summary <- tidy(election_lm)
-
-#printing the summary table
-kable(election_summary, caption = "Regression summary")
-```
-
-The p-value is near 0; suggesting significant relationship.
 
 ```{r}
 #Plotting the Bush and Buchanan data with a log transformation. 
